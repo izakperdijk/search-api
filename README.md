@@ -16,8 +16,17 @@ including the following fields:
 
 ### How to use
 - Run any search using
-`/search/{id}` (doesn't work, runs placeholder model application instead)
+`/search/{id}`
 - Query a saved search using
-`/search/saved/{id}` (works)
+`/search/saved/{id}`
 - Create a saved search using
-`/search/saved/{id}/{query}` (doesn't work)
+`/search/saved/{id}/{query}`
+
+`where`
+* `id` is any valid Splunk saved search identifier
+* `query` is any regular Splunk search query, but replacing
+    * `|` with `$`
+    * `<space>` with `&`
+    * `"` with `@`
+
+It makes sense to do the encryption and REST call from a frontend component.
