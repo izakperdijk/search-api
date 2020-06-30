@@ -1,55 +1,22 @@
 package com.ordina.aiops.splunk.searchapi.controller;
 
+import com.ordina.aiops.splunk.searchapi.config.*;
 import com.splunk.*;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 @Service
 public class SplunkService {
 
-    public void helloSplunk() throws IOException {
+    // Service to Splunk server
+    private static final com.splunk.Service service = Connection.service;
 
-        // Set security protocol
-        com.splunk.Service.setSslSecurityProtocol(SSLSecurityProtocol.TLSv1_2);
+    public void savedSearch(String id) throws IOException {
 
-        // Credentials
-        ServiceArgs loginArgs = new ServiceArgs();
-        loginArgs.setUsername("");
-        loginArgs.setPassword("");
-        loginArgs.setHost("localhost");
-        loginArgs.setPort(8089);
-
-        // Connect and login using credentials
-        com.splunk.Service service = com.splunk.Service.connect(loginArgs);
-
-        /*
-        // Test to see if we're in
-        for (Application app : service.getApplications().values()) {
-            System.out.println(app.getName());
-        }
-        */
-
-        String query = "| summary \"parkinsons_updrs\"";
-        String searchName = "search-test-from-api";
-        // SavedSearch savedSearch = service.getSavedSearches().create(searchName, query); // already created
-
-        /*
-        SavedSearchCollection savedSearches = service.getSavedSearches();
-        System.out.println(savedSearches.size() + " saved searches are available to the current user:\n");
-        for (SavedSearch entity : savedSearches.values()) {
-            System.out.println("     " + entity.getName());
-        }
-        */
-        SavedSearch viewSavedSearch = service.getSavedSearches().get(searchName);
-        /*
-        System.out.println("Properties for '" + viewSavedSearch.getName() + "':\n\n" +
-                "Description:         " + viewSavedSearch.getDescription() + "\n" +
-                "Scheduled:           " + viewSavedSearch.isScheduled() + "\n" +
-                "Next scheduled time: " + viewSavedSearch.getNextScheduledTime() + "\n" +
-                ""
-        );
-        */
+        SavedSearch viewSavedSearch = service.getSavedSearches().get(id);
 
         // Run a saved search and poll for completion
         System.out.println("Run the '" + viewSavedSearch.getName() + "' search ("
@@ -62,6 +29,33 @@ public class SplunkService {
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }
+
+        processJob(Objects.requireNonNull(job));
+
+    }
+
+    public void savedSearch(String id, String query) throws IOException {
+
+        // Create the new Saved Search
+        service.getSavedSearches().create(id, query);
+        // And query it
+        savedSearch(id);
+
+    }
+
+    // Run a regular search
+    public void search(String query) throws IOException {
+
+        JobArgs jobargs = new JobArgs();
+        jobargs.setExecutionMode(JobArgs.ExecutionMode.NORMAL);
+        Job job = service.getJobs().create(query, jobargs);
+
+        processJob(job);
+
+    }
+
+    // Wait for job to finish and System.out.println its results (placeholder)
+    private void processJob(Job job) throws IOException {
 
         System.out.println("Waiting for the job to finish...\n");
 
@@ -77,9 +71,10 @@ public class SplunkService {
 
         // Display results
         InputStream results = job.getResults();
+
         String line = null;
         System.out.println("Results from the search job as XML:\n");
-        BufferedReader br = new BufferedReader(new InputStreamReader(results, "UTF-8"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(results, StandardCharsets.UTF_8));
         while ((line = br.readLine()) != null) {
             System.out.println(line);
         }
