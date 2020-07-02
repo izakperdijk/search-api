@@ -24,9 +24,6 @@ including the following fields:
 
 `where`
 * `id` is any valid Splunk saved search identifier
-* `query` is any regular Splunk search query, but replacing
-    * `|` with `$`
-    * `<space>` with `&`
-    * `"` with `@`
+* `query` is any regular Splunk search query but URL-encoded (UTF-8)
 
-It makes sense to do the encryption and REST call from a frontend component.
+For this reason, it makes sense to do the encoding from a frontend application.

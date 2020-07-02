@@ -5,8 +5,9 @@ import com.splunk.*;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+
+import static com.ordina.aiops.splunk.searchapi.utility.job.JobUtils.*;
 
 @Service
 public class SplunkService {
@@ -14,7 +15,7 @@ public class SplunkService {
     // Service to Splunk server
     private static final com.splunk.Service service = Connection.service;
 
-    public void savedSearch(String id) throws IOException {
+    public String savedSearch(String id) throws IOException {
 
         SavedSearch viewSavedSearch = service.getSavedSearches().get(id);
 
@@ -30,55 +31,28 @@ public class SplunkService {
             e1.printStackTrace();
         }
 
-        processJob(Objects.requireNonNull(job));
+        return processJob(Objects.requireNonNull(job));
 
     }
 
-    public void savedSearch(String id, String query) throws IOException {
+    public String savedSearch(String id, String query) throws IOException {
 
         // Create the new Saved Search
         service.getSavedSearches().create(id, query);
         // And query it
-        savedSearch(id);
+        return savedSearch(id);
 
     }
 
     // Run a regular search
-    public void search(String query) throws IOException {
+    public String search(String query) throws IOException {
 
         JobArgs jobargs = new JobArgs();
         jobargs.setExecutionMode(JobArgs.ExecutionMode.NORMAL);
         Job job = service.getJobs().create(query, jobargs);
 
-        processJob(job);
+        return processJob(job);
 
     }
 
-    // Wait for job to finish and System.out.println its results (placeholder)
-    private void processJob(Job job) throws IOException {
-
-        System.out.println("Waiting for the job to finish...\n");
-
-        // Wait for the job to finish
-        while (!job.isDone()) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        // Display results
-        InputStream results = job.getResults();
-
-        String line = null;
-        System.out.println("Results from the search job as XML:\n");
-        BufferedReader br = new BufferedReader(new InputStreamReader(results, StandardCharsets.UTF_8));
-        while ((line = br.readLine()) != null) {
-            System.out.println(line);
-        }
-        br.close();
-
-    }
 }

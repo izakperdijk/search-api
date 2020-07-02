@@ -1,6 +1,5 @@
 package com.ordina.aiops.splunk.searchapi.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,8 +20,9 @@ public class MainController {
     @GetMapping("/saved/{id}/{query}")
     public ResponseEntity<String> createSavedSearch(@PathVariable String id, @PathVariable String query) throws IOException {
 
-        splunkService.savedSearch(id, parse(query));
-        return new ResponseEntity<>("Splunk saved search " + id + " was created successfully.", HttpStatus.OK);
+        return ResponseEntity.ok()
+                .header("Splunk saved search " + id + " was created successfully.")
+                .body(splunkService.savedSearch(id, decode(query)));
 
     }
 
@@ -30,8 +30,9 @@ public class MainController {
     @GetMapping("/saved/{id}")
     public ResponseEntity<String> querySavedSearch(@PathVariable String id) throws IOException {
 
-        splunkService.savedSearch(id);
-        return new ResponseEntity<>("Splunk saved search called successfully.", HttpStatus.OK);
+        return ResponseEntity.ok()
+                .header("Splunk saved search " + id + " called successfully.")
+                .body(splunkService.savedSearch(id));
 
     }
 
@@ -39,8 +40,9 @@ public class MainController {
     @GetMapping("/{query}")
     public ResponseEntity<String> search(@PathVariable String query) throws IOException {
 
-        splunkService.search(parse(query));
-        return new ResponseEntity<>("Splunk search completed successfully.", HttpStatus.OK);
+        return ResponseEntity.ok()
+                .header("Splunk search completed successfully.")
+                .body(splunkService.search(decode(query)));
 
     }
 
