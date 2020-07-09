@@ -13,7 +13,7 @@ import static com.ordina.aiops.splunk.searchapi.utility.job.JobUtils.*;
 public class SplunkService {
 
     // Service to Splunk server
-    private static final com.splunk.Service service = Connection.service;
+    public static final com.splunk.Service service = Connection.service;
 
     public String savedSearch(String id) throws IOException {
 
@@ -31,7 +31,7 @@ public class SplunkService {
             e1.printStackTrace();
         }
 
-        return processJob(Objects.requireNonNull(job));
+        return getResultsJSON(processJob(Objects.requireNonNull(job)));
 
     }
 
@@ -51,7 +51,20 @@ public class SplunkService {
         jobargs.setExecutionMode(JobArgs.ExecutionMode.NORMAL);
         Job job = service.getJobs().create(query, jobargs);
 
-        return processJob(job);
+        return getResultsJSON(processJob(job));
+
+    }
+
+    public String applyModel(String query) throws IOException {
+
+        JobArgs jobargs = new JobArgs();
+        jobargs.setExecutionMode(JobArgs.ExecutionMode.NORMAL);
+        Job job = service.getJobs().create(query, jobargs);
+
+        String output = query.substring(query.indexOf(" as ") + 4)
+                .replaceAll("\"", "");
+
+        return getModelResults(processJob(job), output);
 
     }
 
