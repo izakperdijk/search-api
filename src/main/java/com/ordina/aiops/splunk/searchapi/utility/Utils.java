@@ -14,36 +14,27 @@ public interface Utils {
     static String decode(String rest) throws UnsupportedEncodingException {
         
         String other = rest.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
-
         return URLDecoder.decode(other, StandardCharsets.UTF_8.name());
 
     }
 
-    static String incident() {
 
-        return "{" +
-            "\"Incident\": {" +
-                "\"Category\": \"incident\"," +
-                "\"IncidentID\": \"IM10181\"," +
-                "\"Status\": \"Open\"," +
-                "\"TicketOwner\": \"rested\"" +
-            "}," +
-            "\"Messages\": [" +
-                "\"The assignment group is invalid.\"," +
-                "\"Select valid assignment group.\"" +
-            "]," +
-            "\"ReturnCode\": 71" +
-        "}";
+    // To-be-updated field is hardcoded for now
+    static Incident updateIncident(Incident incident, String predictedVal) {
+
+        incident.getIncident().setField3(predictedVal);
+        return incident;
 
     }
 
-    static String incidentToQueryArgs(String incidentStringJSON) throws JsonProcessingException {
+    // Temp wrapper to allow PUTting the updated incident into WireMock
+    static String wrapResponse(String updatedIncidentString, String incidentID) {
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        Incident incident = objectMapper.readValue(incidentStringJSON, Incident.class);
-
-        return incident.toString();
+        return String.format("{ " +
+                "\"request\":{\"method\":\"PUT\",\"url\":\"/SM/9/rest/incidents/%s\"}," +
+                "\"response\": {\"status\":200,\"body\": \"%s\"" + "}," +
+                "\"persistent\":true" +
+                "}", incidentID, updatedIncidentString.replaceAll("\"","\\\\\""));
 
     }
 

@@ -1,0 +1,14 @@
+{
+  "id" : "149cf589-a94b-48b1-8065-f74c724544e9",
+  "request" : {
+    "url" : "/SM/9/rest/incidents/",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "[{\"Incident\":{\"Status\":\"Open\",\"TicketOwner\":\"rested\",\"Field2\":\"b\",\"Category\":\"3\",\"Field1\":\"a\",\"Field3\":\"?\",\"IncidentID\":\"149cf589-a94b-48b1-8065-f74c724544e9\"},\"Messages\":[\"The assignment group is invalid.\",\"Select valid assignment group.\"],\"ReturnCode\":\"71\"}, {\"Incident\":{\"Status\":\"Open\",\"TicketOwner\":\"rested\",\"Category\":\"3\",\"IncidentID\":\"149cf589-a94b-48b1-8065-f74c724544e0\",\"Field1\":\"a\",\"Field2\":\"b\",\"Field3\":\"?\"},\"Messages\":[\"The assignment group is invalid.\",\"Select valid assignment group.\"],\"ReturnCode\":\"71\"}]"
+  },
+  "uuid" : "149cf589-a94b-48b1-8065-f74c724544e9",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

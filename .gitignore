@@ -31,4 +31,7 @@ build/
 .vscode/
 
 ### Splunk SDK ###
-/splunk-sdk-java-1.6.5.jar
+/splunk-sdk-java*
+
+### Wiremock ###
+/wiremock-standalone*
