@@ -1,5 +1,7 @@
 package com.ordina.aiops.splunk.searchapi.controller;
 
+import com.ordina.aiops.splunk.searchapi.service.SplunkService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +16,8 @@ import java.io.IOException;
 public class MainController {
 
     // Connect to the Splunk Service
-    private static final SplunkService splunkService = new SplunkService();
+    @Autowired
+    private SplunkService splunkService;
 
     // Create a saved search, f.i. "search-test-from-api", "| summary \"ex_linearreg_greens_sales\""
     @GetMapping("/saved/{id}/{query}")
@@ -58,19 +61,6 @@ public class MainController {
 
     }
 
-    // Apply model 'test_cat' to some hardcoded args, output value as Predicted_Field3
-    // This also converts a hardcoded JSON-incident into query arguments
-    // (which are ignored by Splunk, because they are irrelevant in this case)
-    @GetMapping("/incident")
-    public ResponseEntity<String> handleIncident() throws IOException {
-
-        return ResponseEntity.ok()
-                .header("Incident handled correctly")
-                .body(splunkService.pipeline()
-                );
-
-    }
-
     // Regular search, f.i. "| summary \"ex_linearreg_greens_sales\""
     @GetMapping("/{query}")
     public ResponseEntity<String> search(@PathVariable String query) throws IOException {
@@ -78,6 +68,16 @@ public class MainController {
         return ResponseEntity.ok()
                 .header("Splunk search completed successfully.")
                 .body(splunkService.search(decode(query)));
+
+    }
+
+    @GetMapping("/clean/{index}")
+    public ResponseEntity<String> clean(@PathVariable String index) {
+
+        splunkService.clean(index);
+        return ResponseEntity.ok()
+                .header("Cleaned index" + index)
+                .body("");
 
     }
 
@@ -92,16 +92,6 @@ public class MainController {
 
     }
     */
-
-    @GetMapping("/clean/{index}")
-    public ResponseEntity<String> clean(@PathVariable String index) {
-
-        splunkService.clean(index);
-        return ResponseEntity.ok()
-                .header("Cleaned index" + index)
-                .body("");
-
-    }
 
     /*
     @GetMapping("/collect")

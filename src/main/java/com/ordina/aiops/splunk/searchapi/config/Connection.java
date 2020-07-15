@@ -7,12 +7,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public interface Connection {
+public class Connection {
 
     // Service to Splunk server
-    com.splunk.Service service = Connect();
+    public static com.splunk.Service getService() {
+        return Connect();
+    }
 
-    static com.splunk.Service Connect() {
+    private static com.splunk.Service Connect() {
 
         // Set security protocol
         com.splunk.Service.setSslSecurityProtocol(SSLSecurityProtocol.TLSv1_2);
@@ -36,7 +38,7 @@ public interface Connection {
     }
 
     // Get externalized connection properties and credentials (local file on host)
-    static void setSystemProperties() throws IOException {
+    private static void setSystemProperties() throws IOException {
 
         FileInputStream propFile = new FileInputStream(
                 System.getProperty("user.home")

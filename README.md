@@ -29,16 +29,16 @@ including the following fields:
 `/search/{modelid}/{output}/{args}`
 - Perform some operation on an existing model
 `/search/{modelid}/{query}`
-- Apply the model on all mocked incidents (ft. `Wiremock` see `/mappings` folder) and update them:
-`/search/incident`
 - `¡CAUTION!` Clean an index (empty it entirely) using
 `/search/clean/{index}`
+- Apply the model on all mocked incidents (ft. `Wiremock` see `/mappings` folder) and process them in the corresponding databases (`Splunk`, `SM9`):
+`/pipeline`
 
 where
 * `modelid`/`id`/`output`/`index` is any valid Splunk (model / saved search / label / index) identifier
 * `query` is any regular Splunk search query but URL-encoded (UTF-8)
 * `args` are individual key-value pairs but URL-encoded (UTF-8)
 
-#####Encoding Queries
+###Encoding Queries
 - Search the web for percent or URL encoding to encode your query into the required format
 - Do the encoding from some frontend application
